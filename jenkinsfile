@@ -4,9 +4,7 @@ pipeline {
     environment {
         // Define environment variables if needed
         NEXUS_URL = 'http://nexus.prod.urbanbamboo.in:8081/repository/prabhat/'
-        NEXUS_REPO = 'prabhat'
-        TWINE_USERNAME = credentials('nexus-username')  // Jenkins credentials ID for Nexus username
-        TWINE_PASSWORD = credentials('nexus-password')  // Jenkins credentials ID for Nexus password
+        TWINE_CREDENTIALS_ID = 'nexus-credentials'  // Jenkins credentials ID for Nexus credentials
     }
 
     stages {
@@ -34,10 +32,12 @@ pipeline {
                     // Install twine if not installed
                     sh 'pip install twine'
 
-                    // Upload the package to Nexus repository
-                    sh '''
-                    twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
-                    '''
+                    // Upload the package to Nexus repository using credentials
+                    withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
+                        sh '''
+                        twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
+                        '''
+                    }
                 }
             }
         }
