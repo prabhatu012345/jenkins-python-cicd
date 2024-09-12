@@ -106,6 +106,7 @@ spec:
                     script {
                         sh '''
                         . venv/bin/activate
+                        export PYTHONPATH=$(pwd)  # Set PYTHONPATH to the current working directory
                         pytest tests/test_hello.py --maxfail=1 --disable-warnings -q
                         '''
                     }
