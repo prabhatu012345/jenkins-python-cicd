@@ -64,6 +64,7 @@ spec:
                         sh '''
                         . venv/bin/activate
                         pip install -r requirements.txt
+                        pip install wheel  # Ensure wheel is installed
                         '''
                     }
                 }
