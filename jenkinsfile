@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define environment variables if needed
+        NEXUS_URL = 'http://nexus.prod.urbanbamboo.in:8081/repository/prabhat/'
+        NEXUS_REPO = 'prabhat'
+        TWINE_USERNAME = credentials('nexus-username')  // Jenkins credentials ID for Nexus username
+        TWINE_PASSWORD = credentials('nexus-password')  // Jenkins credentials ID for Nexus password
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/prabhatu012345/jenkins-python-cicd.git'
+            }
+        }
+
+        stage('Build and Package') {
+            steps {
+                script {
+                    // Install dependencies
+                    sh 'pip install -r requirements.txt'
+                    
+                    // Build and package the application
+                    sh 'python setup.py sdist bdist_wheel'
+                }
+            }
+        }
+
+        stage('Upload to Nexus') {
+            steps {
+                script {
+                    // Install twine if not installed
+                    sh 'pip install twine'
+
+                    // Upload the package to Nexus repository
+                    sh '''
+                    twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
+                    '''
+                }
+            }
+        }
+    }
+}
