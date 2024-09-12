@@ -1,10 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.9'  // Use a Python Docker image
+        }
+    }
 
     environment {
-        // Define environment variables if needed
         NEXUS_URL = 'http://nexus.prod.urbanbamboo.in:8081/repository/prabhat/'
-        TWINE_CREDENTIALS_ID = 'nexus-credentials'  // Jenkins credentials ID for Nexus credentials
+        TWINE_CREDENTIALS_ID = 'nexus-credentials'
     }
 
     stages {
@@ -19,10 +22,7 @@ pipeline {
         stage('Set Up Python Environment') {
             steps {
                 script {
-                    // Create a virtual environment
                     sh 'python3 -m venv venv'
-                    
-                    // Activate the virtual environment and upgrade pip
                     sh '''
                     source venv/bin/activate
                     pip install --upgrade pip
@@ -34,7 +34,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Activate the virtual environment and install dependencies
                     sh '''
                     source venv/bin/activate
                     pip install -r requirements.txt
@@ -46,7 +45,6 @@ pipeline {
         stage('Build and Package') {
             steps {
                 script {
-                    // Activate the virtual environment and build the package
                     sh '''
                     source venv/bin/activate
                     python setup.py sdist bdist_wheel
@@ -58,7 +56,6 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // Activate the virtual environment, install twine and upload package
                     sh '''
                     source venv/bin/activate
                     pip install twine
