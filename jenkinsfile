@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Create a virtual environment
-                    sh 'python -m venv venv'
+                    sh 'python3 -m venv venv'
                     
                     // Activate the virtual environment and upgrade pip
                     sh '''
@@ -66,6 +66,15 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
