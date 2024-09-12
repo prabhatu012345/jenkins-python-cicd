@@ -41,11 +41,11 @@ spec:
                     git url: 'https://github.com/prabhatu012345/jenkins-python-cicd.git', branch: 'main'
                 }
             }
-     }
+        }
 
         stage('Set Up Python Environment') {
-            container('python') {
-                steps {
+            steps {
+                container('python') {
                     script {
                         sh '''
                         python3 -m venv venv
@@ -58,8 +58,8 @@ spec:
         }
 
         stage('Install Dependencies') {
-            container('python') {
-                steps {
+            steps {
+                container('python') {
                     script {
                         sh '''
                         source venv/bin/activate
@@ -71,8 +71,8 @@ spec:
         }
 
         stage('Build and Package') {
-            container('python') {
-                steps {
+            steps {
+                container('python') {
                     script {
                         sh '''
                         source venv/bin/activate
@@ -84,8 +84,8 @@ spec:
         }
 
         stage('Upload to Nexus') {
-            container('python') {
-                steps {
+            steps {
+                container('python') {
                     script {
                         withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
                             sh '''
@@ -97,6 +97,15 @@ spec:
                     }
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
