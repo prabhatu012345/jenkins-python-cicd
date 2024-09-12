@@ -1,7 +1,31 @@
 pipeline {
     agent {
-        docker {
-            image 'python:3.9'  // Use a Python Docker image
+        kubernetes {
+            label 'jenkins-pipeline'
+            defaultContainer 'jnlp'
+            yaml '''
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins-pipeline
+spec:
+  serviceAccountName: jenkins-ksa
+  containers:
+  - name: jnlp
+    image: jenkins/inbound-agent:latest
+    # Jenkins will handle the arguments automatically
+    volumeMounts:
+    - mountPath: /var/jenkins_home
+      name: jenkins-home
+  - name: python
+    image: python:3.9
+    command:
+    - cat
+    tty: true
+  volumes:
+  - name: jenkins-home
+    emptyDir: {}
+            '''
         }
     }
 
@@ -20,6 +44,7 @@ pipeline {
         }
 
         stage('Set Up Python Environment') {
+           container('python'){
             steps {
                 script {
                     sh 'python3 -m venv venv'
@@ -30,8 +55,10 @@ pipeline {
                 }
             }
         }
+      }
 
         stage('Install Dependencies') {
+            container('python'){
             steps {
                 script {
                     sh '''
@@ -41,8 +68,10 @@ pipeline {
                 }
             }
         }
+    }
 
         stage('Build and Package') {
+            container('python'){
             steps {
                 script {
                     sh '''
@@ -52,8 +81,10 @@ pipeline {
                 }
             }
         }
+     }
 
         stage('Upload to Nexus') {
+            container('python'){
             steps {
                 script {
                     sh '''
@@ -63,15 +94,6 @@ pipeline {
                     '''
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed.'
         }
     }
 }
