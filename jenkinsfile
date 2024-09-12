@@ -36,13 +36,11 @@ spec:
 
     stages {
         stage('Clone Repository') {
-           container('python') {
             steps {
                 script {
                     git url: 'https://github.com/prabhatu012345/jenkins-python-cicd.git', branch: 'main'
                 }
             }
-        }
      }
 
         stage('Set Up Python Environment') {
