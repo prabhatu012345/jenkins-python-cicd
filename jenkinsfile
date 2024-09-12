@@ -99,6 +99,19 @@ spec:
                 }
             }
         }
+
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    script {
+                        sh '''
+                        . venv/bin/activate
+                        pytest tests/test_hello.py --maxfail=1 --disable-warnings -q
+                        '''
+                    }
+                }
+            }
+        }
     }
 
     post {
