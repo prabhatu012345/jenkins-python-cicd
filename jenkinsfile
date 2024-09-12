@@ -10,7 +10,9 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/prabhatu012345/jenkins-python-cicd.git'
+                script {
+                    git url: 'https://github.com/prabhatu012345/jenkins-python-cicd.git', branch: 'main'
+                }
             }
         }
 
