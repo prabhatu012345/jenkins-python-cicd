@@ -16,14 +16,41 @@ pipeline {
             }
         }
 
+        stage('Set Up Python Environment') {
+            steps {
+                script {
+                    // Create a virtual environment
+                    sh 'python -m venv venv'
+                    
+                    // Activate the virtual environment and upgrade pip
+                    sh '''
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    '''
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Activate the virtual environment and install dependencies
+                    sh '''
+                    source venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
         stage('Build and Package') {
             steps {
                 script {
-                    // Install dependencies
-                    sh 'pip install -r requirements.txt'
-                    
-                    // Build and package the application
-                    sh 'python setup.py sdist bdist_wheel'
+                    // Activate the virtual environment and build the package
+                    sh '''
+                    source venv/bin/activate
+                    python setup.py sdist bdist_wheel
+                    '''
                 }
             }
         }
@@ -31,15 +58,12 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // Install twine if not installed
-                    sh 'pip install twine'
-
-                    // Upload the package to Nexus repository using credentials
-                    withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
-                        sh '''
-                        twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
-                        '''
-                    }
+                    // Activate the virtual environment, install twine and upload package
+                    sh '''
+                    source venv/bin/activate
+                    pip install twine
+                    twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
+                    '''
                 }
             }
         }
