@@ -49,7 +49,7 @@ spec:
                     script {
                         sh '''
                         python3 -m venv venv
-                        source venv/bin/activate
+                        . venv/bin/activate
                         pip install --upgrade pip
                         '''
                     }
@@ -62,7 +62,7 @@ spec:
                 container('python') {
                     script {
                         sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         pip install -r requirements.txt
                         '''
                     }
@@ -75,7 +75,7 @@ spec:
                 container('python') {
                     script {
                         sh '''
-                        source venv/bin/activate
+                        . venv/bin/activate
                         python setup.py sdist bdist_wheel
                         '''
                     }
@@ -89,7 +89,7 @@ spec:
                     script {
                         withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
                             sh '''
-                            source venv/bin/activate
+                            . venv/bin/activate
                             pip install twine
                             twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
                             '''
