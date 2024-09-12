@@ -36,62 +36,67 @@ spec:
 
     stages {
         stage('Clone Repository') {
+           container('python') {
             steps {
                 script {
                     git url: 'https://github.com/prabhatu012345/jenkins-python-cicd.git', branch: 'main'
                 }
             }
         }
-
-        stage('Set Up Python Environment') {
-           container('python'){
-            steps {
-                script {
-                    sh 'python3 -m venv venv'
-                    sh '''
-                    source venv/bin/activate
-                    pip install --upgrade pip
-                    '''
-                }
-            }
-        }
-      }
-
-        stage('Install Dependencies') {
-            container('python'){
-            steps {
-                script {
-                    sh '''
-                    source venv/bin/activate
-                    pip install -r requirements.txt
-                    '''
-                }
-            }
-        }
-    }
-
-        stage('Build and Package') {
-            container('python'){
-            steps {
-                script {
-                    sh '''
-                    source venv/bin/activate
-                    python setup.py sdist bdist_wheel
-                    '''
-                }
-            }
-        }
      }
 
+        stage('Set Up Python Environment') {
+            container('python') {
+                steps {
+                    script {
+                        sh '''
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        pip install --upgrade pip
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            container('python') {
+                steps {
+                    script {
+                        sh '''
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build and Package') {
+            container('python') {
+                steps {
+                    script {
+                        sh '''
+                        source venv/bin/activate
+                        python setup.py sdist bdist_wheel
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Upload to Nexus') {
-            container('python'){
-            steps {
-                script {
-                    sh '''
-                    source venv/bin/activate
-                    pip install twine
-                    twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
-                    '''
+            container('python') {
+                steps {
+                    script {
+                        withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
+                            sh '''
+                            source venv/bin/activate
+                            pip install twine
+                            twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
+                            '''
+                        }
+                    }
                 }
             }
         }
