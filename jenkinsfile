@@ -33,7 +33,7 @@ spec:
 
     environment {
         NEXUS_URL = 'https://nexus.prod.urbanbamboo.in/repository/internal-python-pipeline/'
-        TWINE_CREDENTIALS_ID = 'nexus-credentials'
+        TWINE_CREDENTIALS_ID = 'nexus-credential-prabhat'
     }
 
     stages {
