@@ -32,7 +32,7 @@ spec:
     }
 
     environment {
-        NEXUS_URL = 'https://nexus.prod.urbanbamboo.in/repository/internal-python-pipeline/'
+        NEXUS_URL = 'https://nexus.prod.urbanbamboo.in/repository/internal-python-job/'
         TWINE_CREDENTIALS_ID = 'nexus-credential-prabhat'
     }
 
