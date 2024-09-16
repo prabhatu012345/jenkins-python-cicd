@@ -10,6 +10,8 @@ metadata:
   name: jenkins-pipeline
 spec:
   serviceAccountName: jenkins-ksa
+  nodeSelector:
+    node-pool: jenkins-agent-internal
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
