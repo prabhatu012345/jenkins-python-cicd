@@ -106,10 +106,10 @@ spec:
                     script {
                         withCredentials([usernamePassword(credentialsId: "${TWINE_CREDENTIALS_ID}", usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD')]) {
                             sh '''
-                            . venv/bin/activate
-                            pip install twine
-                            twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD dist/*
-                            '''
+                              . venv/bin/activate
+                                pip install twine
+                                twine upload --repository-url $NEXUS_URL -u $TWINE_USERNAME -p $TWINE_PASSWORD --verbose dist/*
+                                '''
                         }
                     }
                 }
