@@ -32,7 +32,7 @@ spec:
     }
 
     environment {
-        NEXUS_URL = 'https://nexus.prod.urbanbamboo.in/repository/jenkins-pyhton-cicd/'
+        NEXUS_URL = 'https://nexus.prod.urbanbamboo.in/repository/internal-python/'
         TWINE_CREDENTIALS_ID = 'nexus-credentials'
     }
 
